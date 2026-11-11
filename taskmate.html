@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f5fc">
+<title>TaskMate | CPROG Project</title>
+<style>
+:root {
+  --bg: #f7f5fc;
+  --card: #ffffff;
+  --text: #302747;
+  --muted: #89839a;
+  --accent: #7958c8;
+  --accent-hover: #6544b3;
+  --soft: #eee8ff;
+  --border: #e9e2f2;
+  --input: #ffffff;
+  --shadow: 0 8px 24px #3027470a;
+}
+body[data-theme="dark"] {
+  --bg: #171521;
+  --card: #242131;
+  --text: #f5f0ff;
+  --muted: #b0a8c2;
+  --accent: #b49aff;
+  --accent-hover: #9d7df8;
+  --soft: #38304c;
+  --border: #403950;
+  --input: #2c283a;
+  --shadow: 0 8px 24px #00000030;
+}
+body[data-theme="lavender"] {
+  --bg: #f0eaff;
+  --card: #fffaff;
+  --text: #392b51;
+  --muted: #88779e;
+  --accent: #9565cb;
+  --accent-hover: #8250b8;
+  --soft: #eadbff;
+  --border: #e1d1f3;
+  --input: #ffffff;
+  --shadow: 0 8px 24px #5d3e8510;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background .2s, color .2s;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; touch-action: manipulation; border: 0; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.app { max-width: 760px; margin: auto; padding: 18px 14px 110px; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.brand { color: var(--accent); font-size: 11px; letter-spacing: 2px; font-weight: 800; }
+h1 { font-size: clamp(22px, 5vw, 28px); margin: 4px 0; }
+h2 { font-size: 20px; }
+h3 { font-size: 16px; margin-bottom: 12px; }
+.subtitle, .muted { color: var(--muted); font-size: 13px; line-height: 1.4; }
+.icon-btn {
+  border: 0; background: var(--soft); color: var(--accent);
+  border-radius: 12px; width: 42px; height: 42px; font-size: 20px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  cursor: pointer;
+}
+.page { display: none; }
+.page.active { display: block; }
+.top-search-wrap { max-width: 480px; margin: 0 auto 16px; text-align: center; }
+.top-search-wrap input {
+  width: 100%; padding: 12px 16px; border-radius: 24px;
+  border: 1px solid var(--border); background: var(--card);
+  box-shadow: var(--shadow); font-size: 14px; text-align: left;
+}
+.home-countdown-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+  padding: 18px; margin-bottom: 20px; box-shadow: var(--shadow); text-align: center;
+  position: relative;
+}
+.home-countdown-card h3 { font-size: 15px; margin-bottom: 4px; color: var(--text); }
+.big-countdown-timer { font-size: clamp(22px, 6vw, 32px); font-weight: 800; color: var(--accent); margin: 6px 0; letter-spacing: 1px; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 20px; }
+.stat {
+  background: var(--card); color: var(--text); border: 1px solid var(--border);
+  border-radius: 16px; padding: 12px 10px; text-align: left; min-width: 0; box-shadow: var(--shadow);
+  cursor: pointer;
+}
+.stat .symbol { font-size: 18px; }
+.stat strong { display: block; font-size: 22px; margin: 4px 0 2px; }
+.stat small { color: var(--muted); font-size: 11px; }
+.section-title { margin: 22px 0 12px; font-size: 16px; font-weight: 700; }
+.card, .item, .panel {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow);
+}
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quick {
+  background: var(--card); border: 1px solid var(--border); border-radius: 15px;
+  padding: 14px; color: var(--text); text-align: left; cursor: pointer; transition: transform .1s;
+}
+.quick:active { transform: scale(0.98); }
+.quick span { display: block; font-size: 22px; margin-bottom: 6px; }
+.quick strong { display: block; margin-bottom: 3px; font-size: 14px; }
+.quick small { color: var(--muted); font-size: 12px; }
+label { display: block; font-size: 12px; font-weight: 700; margin: 12px 0 6px; }
+input, textarea, select {
+  display: block; width: 100%; padding: 11px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--input); color: var(--text);
+  font-size: 14px; min-width: 0;
+}
+textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
+.primary, .secondary, .danger-btn {
+  width: 100%; border: 0; border-radius: 12px; padding: 12px; margin-top: 10px;
+  font-weight: 700; font-size: 14px; cursor: pointer; transition: opacity .15s;
+}
+.primary { background: var(--accent); color: #fff; }
+.primary:hover { background: var(--accent-hover); }
+.secondary { border: 1px solid var(--border); background: var(--soft); color: var(--text); }
+.danger-btn { background: #ffe9e9; color: #ad3333; }
+.form-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; border: 0; background: transparent; color: var(--text);
+  font-weight: 700; text-align: left; padding: 2px 0; cursor: pointer;
+}
+.form-content[hidden] { display: none; }
+.filters, .toolbar { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 12px; align-items: center; padding-bottom: 4px; }
+.filter {
+  white-space: nowrap; padding: 8px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--card); color: var(--muted);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.filter.active { background: var(--accent); color: white; border-color: var(--accent); }
+.search { margin-bottom: 12px; }
+.item { display: flex; gap: 12px; align-items: flex-start; position: relative; overflow: hidden; }
+.item-content { flex: 1; min-width: 0; }
+.item-content h4 { font-size: 15px; overflow-wrap: anywhere; margin-bottom: 4px; }
+.item-content p { color: var(--muted); font-size: 12px; margin: 4px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.check { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--accent); margin-top: 2px; cursor: pointer; }
+.completed h4 { text-decoration: line-through; opacity: .6; }
+.subtask-list { margin-top: 8px; padding-left: 4px; display: flex; flex-direction: column; gap: 4px; }
+.subtask-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text); cursor: pointer; }
+.subtask-item input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent); cursor: pointer; }
+.subtask-item.completed span { text-decoration: line-through; opacity: .6; }
+.priority, .subject-tag, .tag, .due-badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin: 4px 4px 0 0; }
+.High { background: #ffe3e5; color: #a72e2e; }
+.Medium { background: #fff0d6; color: #8d5a0b; }
+.Low { background: #ddf5e6; color: #246c42; }
+.badge-overdue { background: #ffd4d4; color: #9c1c1c; }
+.badge-today { background: #ffebad; color: #805700; }
+.badge-tomorrow { background: #e0f2fe; color: #0369a1; }
+.badge-upcoming { background: #f3e8ff; color: #6b21a8; }
+.small-btn { border: 0; padding: 6px 10px; border-radius: 8px; font-size: 11px; white-space: nowrap; font-weight: 600; cursor: pointer; }
+.edit { background: var(--soft); color: var(--accent); }
+.delete { background: #ffe9e9; color: #ae3737; }
+.pin-btn { background: #fef08a; color: #854d0e; }
+.restore { background: #e0f2fe; color: #0369a1; }
+.empty {
+  padding: 28px 16px; text-align: center; color: var(--muted); line-height: 1.6;
+  background: var(--card); border: 1px dashed var(--border); border-radius: 16px; font-size: 13px;
+}
+.note-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow);
+  cursor: pointer; text-align: left; width: 100%; display: block; transition: transform .1s;
+  position: relative;
+}
+.note-card.pinned { border: 2px solid var(--accent); }
+.note-card:active { transform: scale(0.99); }
+.note-card h4 { font-size: 15px; margin-bottom: 4px; color: var(--text); }
+.note-preview {
+  margin-top: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; white-space: pre-wrap; line-height: 1.5; overflow-wrap: anywhere; color: var(--muted); font-size: 12px;
+}
+.note-top-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.clean-title-input { font-size: 24px; font-weight: 800; border: none; background: transparent; padding: 4px 0; box-shadow: none; width: 100%; }
+.clean-title-input:focus { outline: none; border-bottom: 2px solid var(--accent); border-radius: 0; }
+.clean-sub-input { font-size: 14px; color: var(--muted); border: none; background: transparent; padding: 2px 0; margin-bottom: 12px; width: 100%; }
+.clean-sub-input:focus { outline: none; border-bottom: 1px solid var(--accent); border-radius: 0; }
+.full-note-area { min-height: 40vh; font-size: 15px; line-height: 1.6; border: 1px solid var(--border); border-radius: 14px; padding: 14px; background: var(--card); width: 100%; }
+.readonly-badge, .pinned-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--soft); color: var(--accent); font-size: 11px;
+  font-weight: 700; padding: 4px 8px; border-radius: 6px; margin-bottom: 8px; margin-right: 4px;
+}
+.pinned-badge { background: #fef08a; color: #854d0e; }
+.readonly-toggle-wrap { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; }
+.readonly-toggle-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.media-btn-group { display: flex; gap: 8px; margin: 8px 0 12px; flex-wrap: wrap; }
+.media-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+  border-radius: 10px; background: var(--soft); color: var(--accent);
+  font-size: 12px; font-weight: 700; border: 1px solid var(--border); cursor: pointer;
+}
+.note-image-preview { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; }
+.img-thumb-wrap { position: relative; flex-shrink: 0; }
+.note-image-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; display: block; }
+.img-delete-btn {
+  position: absolute; top: -6px; right: -6px; background: #ad3333; color: #fff;
+  border-radius: 50%; width: 20px; height: 20px; font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; border: 2px solid var(--card); cursor: pointer;
+}
+.lightbox {
+  position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.85);
+  display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px);
+}
+.lightbox.show { display: flex; }
+.lightbox img { max-width: 100%; max-height: 85vh; border-radius: 12px; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.lightbox-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: #fff; font-size: 24px; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.calendar-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 14px; }
+.week-grid.compact { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.week-grid.compact .day-cell { min-height: 85px; padding: 6px 2px; }
+.week-grid.wide { display: flex; flex-direction: column; gap: 8px; }
+.week-grid.wide .day-cell { display: flex; align-items: center; justify-content: space-between; text-align: left; padding: 12px 16px; min-height: auto; border-radius: 12px; }
+.week-grid.wide .day-cell .wide-left { display: flex; align-items: center; gap: 12px; }
+.week-grid.wide .day-num { font-size: 16px; margin: 0; }
+.day-cell {
+  border: 1px solid var(--border); background: var(--card); border-radius: 10px;
+  text-align: center; color: var(--text); font-size: 11px;
+  cursor: pointer; user-select: none; transition: transform .1s, background .15s;
+}
+.day-cell:active { transform: scale(0.96); }
+.day-cell.today { border: 2px solid var(--accent); }
+.day-cell.selected { background: var(--soft); border-color: var(--accent); }
+.day-num { font-weight: 800; font-size: 14px; margin: 4px 0; }
+.day-dot { display: block; background: var(--accent); color: white; border-radius: 6px; padding: 2px 4px; margin: 2px 0; font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; width: 100%; display: grid; grid-template-columns: repeat(6, 1fr);
+  padding: 10px 2px calc(10px + env(safe-area-inset-bottom)); background: var(--card); border-top: 1px solid var(--border); z-index: 50;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+}
+.nav-btn {
+  border: 0; background: transparent; color: var(--muted); display: flex;
+  flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 6px 0; font-size: 9px; font-weight: 700; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-btn .nav-icon { font-size: 18px; }
+.nav-btn.active { color: var(--accent); font-weight: 800; }
+.nav-btn.active .nav-icon { background: var(--soft); padding: 2px 8px; border-radius: 12px; }
+.overlay {
+  position: fixed; inset: 0; z-index: 60; background: #00000066;
+  display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(3px);
+}
+.overlay.show { display: flex; }
+.sheet {
+  background: var(--bg); color: var(--text); width: 100%; max-width: 760px; max-height: 90vh; max-height: 90dvh;
+  overflow: auto; padding: 20px 16px calc(24px + env(safe-area-inset-bottom)); border-radius: 22px 22px 0 0;
+}
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+.sheet-head h2 { font-size: 18px; }
+.setting-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.setting-row p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.setting-row select { width: auto; max-width: 140px; }
+.timer-display { font-size: clamp(46px, 14vw, 72px); font-weight: 800; letter-spacing: 2px; text-align: center; padding: 16px 0; font-variant-numeric: tabular-nums; color: var(--accent); }
+.timer-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.timer-modes button { border: 1px solid var(--border); background: var(--card); color: var(--text); border-radius: 10px; padding: 10px 4px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.timer-modes button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pomodoro-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: var(--soft); padding: 12px 8px; border-radius: 12px; margin-bottom: 16px; text-align: center; }
+.pomodoro-stats small { display: block; color: var(--muted); font-size: 10px; }
+.pomodoro-stats strong { font-size: 14px; color: var(--accent); }
+.calc-container { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); max-width: 380px; margin: 0 auto; }
+.calc-screen { width: 100%; background: var(--input); color: var(--text); font-size: 28px; font-weight: 800; text-align: right; padding: 14px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 12px; overflow-x: auto; }
+.calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.calc-btn { background: var(--soft); color: var(--text); border: 1px solid var(--border); padding: 16px 0; font-size: 18px; font-weight: 700; border-radius: 10px; cursor: pointer; }
+.calc-btn.op { background: var(--accent); color: #fff; border-color: var(--accent); }
+.calc-btn.span-2 { grid-column: span 2; }
+.flashcard-hub { margin-top: 10px; }
+.flashcard-box { background: var(--card); border: 2px solid var(--border); border-radius: 20px; padding: 30px 20px; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: var(--shadow); cursor: pointer; position: relative; margin-bottom: 16px; }
+.flashcard-box .side-label { position: absolute; top: 12px; left: 16px; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.flashcard-box .content { font-size: 18px; font-weight: 700; color: var(--text); word-break: break-word; white-space: pre-wrap; }
+.flashcard-controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; }
+.memory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 340px; margin: 16px auto; }
+.memory-card { background: var(--soft); border: 1px solid var(--border); border-radius: 10px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; cursor: pointer; }
+.memory-card.flipped { background: var(--card); border-color: var(--accent); }
+.games-tab-list { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 16px; padding-bottom: 4px; }
+.tools-split-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.tools-tab-btn { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 12px; font-weight: 700; font-size: 14px; border-radius: 12px; cursor: pointer; text-align: center; }
+.tools-tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* Multiple Choice styling */
+.mc-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); text-align: left; }
+.mc-score-bar { background: var(--soft); border-left: 4px solid var(--accent); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 13px; }
+.mc-options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.mc-option-btn { width: 100%; text-align: left; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--soft); color: var(--text); font-weight: 600; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.mc-option-btn.correct { background: #ddf5e6 !important; color: #246c42 !important; border-color: #246c42 !important; }
+.mc-option-btn.wrong { background: #ffe3e5 !important; color: #a72e2e !important; border-color: #a72e2e !important; }
+.mc-opt-score { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.05); visibility: hidden; }
+.mc-card.answered .mc-opt-score { visibility: visible; }
+
+footer { text-align: center; font-size: 11px; color: var(--muted); margin-top: 32px; line-height: 1.8; padding: 8px; }
+footer strong { display: block; color: var(--accent); letter-spacing: 2px; font-size: 12px; }
+footer .names { font-weight: 800; color: var(--text); letter-spacing: 1px; }
+@media print {
+  body * { visibility: hidden; }
+  #noteViewPage, #noteViewPage * { visibility: visible; }
+  #noteViewPage { position: absolute; inset: 0; background: #fff; color: #000; padding: 20px; }
+  .note-top-bar, .readonly-toggle-wrap, .media-btn-group, #saveViewNote { display: none !important; }
+}
+[hidden] { display: none !important; }
+@media(min-width:600px){ .app { padding-left: 20px; padding-right: 20px; } }
+</style>
+</head>
+<body data-theme="light">
+<div class="app">
+<header id="mainHeader">
+  <div>
+    <div class="brand">TASKMATE · STUDENT PLANNER</div>
+    <h1 id="pageTitle">My Dashboard ✨</h1>
+    <p class="subtitle" id="pageSubtitle">Your school life, organized.</p>
+  </div>
+  <button class="icon-btn" id="menuButton" type="button" aria-label="Open menu">☰</button>
+</header>
+<main class="page active" id="homePage">
+  <div class="top-search-wrap">
+    <input id="globalSearch" type="search" placeholder="🔍 Search tasks, subjects, or notes..." aria-label="Search all tasks and notes">
+  </div>
+  <div class="home-countdown-card" id="homeCountdownCard" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3 id="homeExamTitleName">🚨 Exam Countdown</h3>
+      <button class="small-btn edit" type="button" onclick="openExamCountdownModal()">Edit</button>
+    </div>
+    <div class="big-countdown-timer" id="homeBigCountdown">0d 0h 0m</div>
+  </div>
+  <div class="stats">
+    <button class="stat" type="button" data-stat="All"><span class="symbol">📚</span><strong id="total">0</strong><small>Total Tasks ›</small></button>
+    <button class="stat" type="button" data-stat="Pending"><span class="symbol">⏳</span><strong id="pending">0</strong><small>Pending ›</small></button>
+    <button class="stat" type="button" data-stat="Completed"><span class="symbol">✅</span><strong id="completed">0</strong><small>Completed ›</small></button>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <h3 class="section-title" style="margin:0;">Quick Access</h3>
+    <button class="small-btn edit" type="button" onclick="openExamCountdownModal()">＋ Set Exam Countdown</button>
+  </div>
+  
+  <div class="quick-grid" style="margin-top:12px;">
+    <button class="quick" type="button" onclick="navigateTo('tasksNotesPage')"><span>📝📒</span><strong>Tasks & Notes</strong><small>Manage school & notes</small></button>
+    <button class="quick" type="button" onclick="navigateTo('calendarPage')"><span>🗓️</span><strong>Weekly Calendar</strong><small>See due dates</small></button>
+    <button class="quick" type="button" onclick="navigateTo('timerPage')"><span>🍅</span><strong>Study Timer</strong><small>Focus one session</small></button>
+    <button class="quick" type="button" onclick="navigateTo('toolsPage')"><span>🧮🃏</span><strong>Calculator & Cards</strong><small>Math, flashcards & quiz</small></button>
+  </div>
+  <h3 class="section-title">Upcoming & Priority Tasks</h3>
+  <div id="homeTasks"></div>
+  <h3 class="section-title">Recent Notes</h3>
+  <div id="homeNotes"></div>
+</main>
+<main class="page" id="tasksNotesPage">
+  <div class="tools-split-tabs" style="grid-template-columns: 1fr 1fr;">
+    <button class="tools-tab-btn active" id="tasksTabBtn" type="button" onclick="switchTasksNotesTab('tasks')">📝 My Tasks</button>
+    <button class="tools-tab-btn" id="notesTabBtn" type="button" onclick="switchTasksNotesTab('notes')">📒 My Notes</button>
+  </div>
+  <div id="tasksSection">
+    <section class="card">
+      <button type="button" class="form-toggle" data-collapse="taskFormContent"><span id="taskFormHeading">＋ Add New Task</span><span id="taskFormArrow">⌄</span></button>
+      <div class="form-content" id="taskFormContent" hidden>
+        <form id="taskForm">
+          <label for="taskTitle">Task Name</label>
+          <input id="taskTitle" maxlength="120" required placeholder="e.g. Research paper">
+          
+          <label for="taskSubject">Subject</label>
+          <input id="taskSubject" maxlength="80" required placeholder="e.g. Programming">
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <label for="taskDue">Due Date</label>
+              <input id="taskDue" type="date" required>
+            </div>
+            <div>
+              <label for="taskDueTime">Due Time (optional)</label>
+              <input id="taskDueTime" type="time">
+            </div>
+          </div>
+          
+          <label for="taskPriority">Priority</label>
+          <select id="taskPriority">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+          </select>
+          <label for="taskSubtasks">Subtasks (optional, one per line)</label>
+          <textarea id="taskSubtasks" placeholder="e.g. Outline chapter&#10;Write draft&#10;Review references" style="min-height:70px;"></textarea>
+          
+          <button class="primary" type="submit">＋ Add Task</button>
+        </form>
+      </div>
+    </section>
+    <input class="search" id="taskSearch" type="search" placeholder="🔎 Search tasks or subjects..." aria-label="Search tasks">
+    
+    <div class="filters">
+      <button class="filter active" type="button" data-filter="All">All</button>
+      <button class="filter" type="button" data-filter="Pending">Pending</button>
+      <button class="filter" type="button" data-filter="Completed">Completed</button>
+      <button class="filter" type="button" data-filter="High">High Priority</button>
+    </div>
+    <div id="taskList"></div>
+  </div>
+  <div id="notesSection" hidden>
+    <section class="card">
+      <button type="button" class="form-toggle" data-collapse="noteFormContent"><span id="noteFormHeading">＋ Create a Note</span><span id="noteFormArrow">⌄</span></button>
+      <div class="form-content" id="noteFormContent" hidden>
+        <form id="noteForm">
+          <label for="noteTitle">Note Title</label>
+          <input id="noteTitle" maxlength="120" required placeholder="e.g. Chapter 1 Reviewer">
+          
+          <label for="noteSubject">Subject (optional)</label>
+          <input id="noteSubject" maxlength="80" placeholder="e.g. Programming, Math, Science">
+          
+          <div class="readonly-toggle-wrap">
+            <span class="readonly-toggle-label">Set as Read-Only Mode</span>
+            <input type="checkbox" id="noteReadOnly" class="check" style="width:auto">
+          </div>
+          <label>Add & Save Photos</label>
+          <div class="media-btn-group">
+            <button type="button" class="media-btn" onclick="triggerCamera('form')">📷 Camera</button>
+            <button type="button" class="media-btn" onclick="triggerGallery('form')">🖼️ Gallery</button>
+          </div>
+          <input type="file" id="cameraInputForm" accept="image/*" capture="environment" hidden>
+          <input type="file" id="galleryInputForm" accept="image/*" hidden>
+          <div class="note-image-preview" id="formImagePreview"></div>
+          <label for="noteBody">Write your notes</label>
+          <textarea id="noteBody" maxlength="10000" required placeholder="Write your lesson or ideas..."></textarea>
+          
+          <button class="primary" type="submit">＋ Save Note</button>
+        </form>
+      </div>
+    </section>
+    <input class="search" id="noteSearch" type="search" placeholder="🔎 Search notes or subjects..." aria-label="Search notes">
+    
+    <div class="filters" id="noteSubjectFilters">
+      <button class="filter active" type="button" onclick="filterNotesBySubject('All')">All Subjects</button>
+    </div>
+    <div id="notesList"></div>
+  </div>
+</main>
+<main class="page" id="noteViewPage">
+  <div class="note-top-bar">
+    <button class="icon-btn" id="closeNoteView" type="button" aria-label="Back to notes">←</button>
+    <div style="display:flex;gap:6px;">
+      <button class="small-btn edit" id="printNoteBtn" type="button">🖨️ Print / PDF</button>
+      <button class="small-btn delete" id="deleteNoteFromView" type="button">Delete</button>
+    </div>
+  </div>
+  
+  <div style="display:flex;gap:4px;flex-wrap:wrap;">
+    <div id="readOnlyBadge" class="readonly-badge" hidden>🔒 Read-Only</div>
+    <div id="pinnedBadgeView" class="pinned-badge" hidden>📌 Pinned</div>
+  </div>
+  <p class="subtitle" id="viewNoteMeta" style="margin-bottom:8px;"></p>
+  <div class="readonly-toggle-wrap">
+    <span class="readonly-toggle-label">Lock Note (Read-Only)</span>
+    <input type="checkbox" id="viewReadOnlyToggle" class="check" style="width:auto">
+  </div>
+  <input class="clean-title-input" id="viewNoteTitle" placeholder="Title..." maxlength="120">
+  <input class="clean-sub-input" id="viewNoteSubject" placeholder="Subject (optional)..." maxlength="80">
+  <div id="viewMediaGroup" class="media-btn-group">
+    <button type="button" class="media-btn" onclick="triggerCamera('view')">📷 Camera</button>
+    <button type="button" class="media-btn" onclick="triggerGallery('view')">🖼️ Gallery</button>
+  </div>
+  <input type="file" id="cameraInputView" accept="image/*" capture="environment" hidden>
+  <input type="file" id="galleryInputView" accept="image/*" hidden>
+  <div class="note-image-preview" id="viewImagePreview"></div>
+  <textarea class="full-note-area" id="viewNoteBody" placeholder="Note something down..."></textarea>
+  
+  <button class="primary" id="saveViewNote" type="button" style="margin-top:16px">Done & Save Note</button>
+</main>
+<main class="page" id="calendarPage">
+  <section class="panel">
+    <div class="calendar-head">
+      <button class="icon-btn" type="button" id="prevWeek" aria-label="Previous week">‹</button>
+      <div style="text-align:center">
+        <h3 id="weekLabel">This Week</h3>
+        <p class="subtitle">Tap any day to see scheduled tasks.</p>
+      </div>
+      <button class="icon-btn" type="button" id="nextWeek" aria-label="Next week">›</button>
+    </div>
+    <div class="tools-split-tabs" style="grid-template-columns: 1fr 1fr; margin-bottom:14px;">
+      <button class="tools-tab-btn active" id="calViewCompact" type="button" onclick="setCalendarView('compact')">Compact Grid</button>
+      <button class="tools-tab-btn" id="calViewWide" type="button" onclick="setCalendarView('wide')">Wide Horizontal</button>
+    </div>
+    <div class="week-grid compact" id="weekGrid"></div>
+  </section>
+  <h3 class="section-title" id="selectedDayTitle">Tasks for selected day</h3>
+  <div id="dayTasks"></div>
+</main>
+<main class="page" id="timerPage">
+  <section class="panel">
+    <h3 style="text-align:center">🍅 Study Focus Timer</h3>
+    <p class="subtitle" style="text-align:center">Work in focused sessions, then take a break.</p>
+    <div class="pomodoro-stats" style="margin-top:14px">
+      <div>
+        <small>Sessions</small>
+        <strong id="pomoCount">0</strong>
+      </div>
+      <div>
+        <small>Session Focus</small>
+        <strong id="pomoMins">0m</strong>
+      </div>
+      <div>
+        <small>Total Lifetime</small>
+        <strong id="pomoTotalTime">0m</strong>
+      </div>
+    </div>
+    
+    <div class="timer-modes">
+      <button type="button" data-minutes="25" data-mode="Focus" class="active">Focus · 25m</button>
+      <button type="button" data-minutes="5" data-mode="Short break">Short · 5m</button>
+      <button type="button" data-minutes="15" data-mode="Long break">Long · 15m</button>
+    </div>
+    
+    <div class="timer-display" id="timerDisplay">25:00</div>
+    <p class="subtitle" id="timerStatus" style="text-align:center">Ready when you are.</p>
+    
+    <button class="primary" type="button" id="timerStart">▶ Start Focus</button>
+    <button class="secondary" type="button" id="timerReset">↻ Reset Timer</button>
+  </section>
+</main>
+<main class="page" id="toolsPage">
+  <div class="tools-split-tabs">
+    <button class="tools-tab-btn active" id="calcTabBtn" type="button" onclick="switchToolTab('calc')">🧮 Calculator</button>
+    <button class="tools-tab-btn" id="flashTabBtn" type="button" onclick="switchToolTab('flash')">🃏 Flashcards</button>
+    <button class="tools-tab-btn" id="mcTabBtn" type="button" onclick="switchToolTab('mc')">🎯 Quiz</button>
+  </div>
+  <div id="calcSection">
+    <div class="calc-container">
+      <div class="calc-screen" id="calcScreen">0</div>
+      <div class="calc-grid">
+        <button class="calc-btn" type="button" onclick="calcClear()">C</button>
+        <button class="calc-btn" type="button" onclick="calcAppend('/')">÷</button>
+        <button class="calc-btn" type="button" onclick="calcAppend('*')">×</button>
+        <button class="calc-btn op" type="button" onclick="calcBack()">⌫</button>
+        
+        <button class="calc-btn" type="button" onclick="calcAppend('7')">7</button>
+        <button class="calc-btn" type="button" onclick="calcAppend('8')">8</button>
+        <button class="calc-btn" type="button" onclick="calcAppend('9')">9</button>
+        <button class="calc-btn op" type="button" onclick="calcAppend('-')">-</button>
+        
+        <button class="calc-btn" type="button" onclick="calcAppend('4')">4</button>
+        <button class="calc-btn" type="button" onclick="calcAppend('5')">5</button>
+        <button class="calc-btn" type="button" onclick="calcAppend('6')">6</button>
+        <button class="calc-btn op" type="button" onclick="calcAppend('+')">+</button>
+        
+        <button class="calc-btn" type="button" onclick="calcAppend('1')">1</button>
+        <button class="calc-btn" type="button" onclick="calcAppend('2')">2</button>
+        <button class="calc-btn" type="button" onclick="calcAppend('3')">3</button>
+        <button class="calc-btn op span-2" style="grid-row: span 2; height: auto;" type="button" onclick="calcCompute()">=</button>
+        
+        <button class="calc-btn span-2" type="button" onclick="calcAppend('0')">0</button>
+        <button class="calc-btn" type="button" onclick="calcAppend('.')">.</button>
+      </div>
+    </div>
+  </div>
+  <div id="flashSection" hidden>
+    <section class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <button type="button" class="form-toggle" data-collapse="flashFormContent" style="flex:1;"><span id="flashFormHeading">＋ Add New Flashcard</span><span id="flashFormArrow">⌄</span></button>
+        <button type="button" class="small-btn edit" id="addCardToCategoryBtn" onclick="openAddCardForCurrentCategory()" style="display:none;white-space:nowrap;">+ Add to this Subject</button>
+      </div>
+      <div class="form-content" id="flashFormContent" hidden>
+        <form id="flashForm">
+          <input type="hidden" id="editCardId" value="">
+          <label for="flashCategory">Category / Subject</label>
+          <input id="flashCategory" maxlength="50" required placeholder="e.g. Programming, Science">
+          
+          <label for="flashFront">Front (Question / Term)</label>
+          <textarea id="flashFront" maxlength="500" required placeholder="e.g. What is an API and how does it work..." style="min-height:90px;"></textarea>
+          
+          <label for="flashBack">Back (Answer / Definition)</label>
+          <textarea id="flashBack" maxlength="500" required placeholder="e.g. Application Programming Interface..." style="min-height:90px;"></textarea>
+          
+          <button class="primary" type="submit" id="flashSubmitBtn">＋ Save Flashcard</button>
+        </form>
+      </div>
+    </section>
+    <div class="filters" id="flashCategoryFilters">
+      <button class="filter active" type="button" onclick="filterFlashcardsByCategory('All')">All Categories</button>
+    </div>
+    <div class="flashcard-hub" id="flashcardHub"></div>
+  </div>
+  <div id="mcSection" hidden>
+    <div class="filters" id="mcCategoryFilters" style="margin-bottom: 12px;">
+      <button class="filter active" type="button" onclick="filterMCCategory('All')">All Categories</button>
+    </div>
+    <div id="flashcardMCSection"></div>
+  </div>
+</main>
+<main class="page" id="gamesPage">
+  <div class="games-tab-list">
+    <button class="filter active" id="gameTab1" type="button" onclick="switchGame(1)">🃏 Memory Match (15 Boxes)</button>
+    <button class="filter" id="gameTab2" type="button" onclick="switchGame(2)">🧮 Math Quick Quiz</button>
+  </div>
+  <section class="panel" id="miniGame1" style="text-align:center;">
+    <h3>🃏 Memory Match (15 Boxes)</h3>
+    <p class="subtitle">Find all 7 matching pairs among the 15 boxes!</p>
+    <div style="margin:10px 0; font-weight:700;" id="memoryScore">Matched: 0 / 7</div>
+    <div class="memory-grid" id="memoryGrid"></div>
+    <button class="secondary" type="button" onclick="initMemoryGame()" style="max-width:200px;margin:12px auto 0;">🔄 Reset Game</button>
+  </section>
+  <section class="panel" id="miniGame2" style="text-align:center;display:none;">
+    <h3>🧮 Math Quick Quiz</h3>
+    <p class="subtitle">Solve as many mental math problems as you can!</p>
+    <div style="margin:16px 0; font-size:24px; font-weight:800; color:var(--accent);" id="mathProblem">5 + 3 = ?</div>
+    <input type="number" id="mathAnswerInput" placeholder="Your answer..." style="max-width:220px;margin:0 auto 12px;text-align:center;font-size:18px;" onkeydown="if(event.key==='Enter')checkMathAnswer()">
+    <button class="primary" type="button" onclick="checkMathAnswer()" style="max-width:220px;margin:0 auto;">Submit Answer</button>
+    <div style="margin-top:14px;font-weight:700;" id="mathScoreDisplay">Score: 0</div>
+  </section>
+</main>
+<footer>
+  <strong>CPROG PROJECT</strong>
+  <span class="names">ARIANE • PRINCES • DIVINA</span><br>
+  TaskMate © 2026 · One step at a time.
+</footer>
+</div>
+<nav class="bottom-nav">
+  <button class="nav-btn active" type="button" onclick="navigateTo('homePage')"><span class="nav-icon">⌂</span>Home</button>
+  <button class="nav-btn" type="button" onclick="navigateTo('tasksNotesPage')"><span class="nav-icon">📝</span>Notes</button>
+  <button class="nav-btn" type="button" onclick="navigateTo('calendarPage')"><span class="nav-icon">▦</span>Calendar</button>
+  <button class="nav-btn" type="button" onclick="navigateTo('timerPage')"><span class="nav-icon">◷</span>Timer</button>
+  <button class="nav-btn" type="button" onclick="navigateTo('toolsPage')"><span class="nav-icon">🧮</span>Tools</button>
+  <button class="nav-btn" type="button" onclick="navigateTo('gamesPage')"><span class="nav-icon">🎮</span>Games</button>
+</nav>
+<div class="overlay" id="menuOverlay">
+  <section class="sheet">
+    <div class="sheet-head">
+      <h2>Quick Menu</h2>
+      <button type="button" class="icon-btn close-overlay">×</button>
+    </div>
+    <button type="button" class="secondary menu-action" id="openTrashBtn" style="margin-bottom:8px">🗑️ Trash Bin</button>
+    <button type="button" class="secondary menu-action" id="openSettingsBtn">⚙️ Settings & Theme</button>
+    <p class="subtitle" style="margin-top:15px">Your schoolwork stays organized directly on this device.</p>
+  </section>
+</div>
+<div class="overlay" id="examCountdownOverlay">
+  <section class="sheet">
+    <div class="sheet-head">
+      <h2>🚨 Set Exam Countdown</h2>
+      <button type="button" class="icon-btn close-overlay" onclick="closeModals()">×</button>
+    </div>
+    <div class="card">
+      <form id="examForm" onsubmit="saveExamCountdown(event)">
+        <label for="examTitle">Exam / Quiz Name</label>
+        <input id="examTitle" required placeholder="e.g. CPROG Midterm Exam">
+        
+        <label for="examDate">Exam Date & Time</label>
+        <input id="examDate" type="datetime-local" required>
+        
+        <button class="primary" type="submit">Save Countdown</button>
+      </form>
+    </div>
+    <button class="secondary" type="button" onclick="closeModals()" style="margin-top:12px">Close</button>
+  </section>
+</div>
+<div class="overlay" id="trashOverlay">
+  <section class="sheet">
+    <div class="sheet-head">
+      <h2>🗑️ Trash Bin</h2>
+      <button type="button" class="icon-btn close-overlay">×</button>
+    </div>
+    <p class="subtitle" style="margin-bottom:12px">Items here can be restored or permanently deleted.</p>
+    <div id="trashList"></div>
+    <button class="danger-btn" id="emptyTrashBtn" type="button" style="margin-top:12px">Empty Trash</button>
+  </section>
+</div>
+<div class="overlay" id="settingsOverlay">
+  <section class="sheet">
+    <div class="sheet-head">
+      <h2>⚙️ Settings & Theme</h2>
+      <button type="button" class="icon-btn close-overlay">×</button>
+    </div>
+    <div class="setting-row">
+      <div>
+        <strong>App Theme</strong>
+        <p>Customize TaskMate color scheme</p>
+      </div>
+      <select id="themeSelect">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="lavender">Lavender</option>
+      </select>
+    </div>
+    <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:10px;">
+      <div>
+        <strong>Backup Data</strong>
+        <p>Export or import your tasks, notes & flashcards as a backup file.</p>
+      </div>
+      <div style="display:flex;gap:8px;width:100%;">
+        <button class="secondary" id="exportDataBtn" type="button">📥 Export Backup</button>
+        <button class="secondary" id="importDataBtn" type="button">📤 Import Backup</button>
+        <input type="file" id="importFileInput" accept=".json" hidden>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="lightbox" id="photoLightbox" onclick="closeLightbox()">
+  <span class="lightbox-close">&times;</span>
+  <img id="lightboxImg" src="" alt="Full view">
+</div>
+<script>
+let tasks = JSON.parse(localStorage.getItem('tm_tasks')) || [];
+let notes = JSON.parse(localStorage.getItem('tm_notes')) || [];
+let flashcards = JSON.parse(localStorage.getItem('tm_flashcards')) || [];
+let trash = JSON.parse(localStorage.getItem('tm_trash')) || [];
+let pomoStats = JSON.parse(localStorage.getItem('tm_pomo')) || { sessions: 0, totalMinutes: 0 };
+let examData = JSON.parse(localStorage.getItem('tm_exam')) || null;
+let activeNoteId = null;
+let currentFilter = 'All';
+let currentSubjectFilter = 'All';
+
+// Persisted State for Flashcards & Quizzes
+let flashcardState = JSON.parse(localStorage.getItem('tm_flashcard_state')) || { index: 0, category: 'All' };
+let currentCardIndex = flashcardState.index || 0;
+let currentFlashCategory = flashcardState.category || 'All';
+let isCardFlipped = false;
+
+let quizState = JSON.parse(localStorage.getItem('tm_quiz_state')) || { score: 0, attempted: 0, askedIds: [], category: 'All' };
+let mcTotalPoints = quizState.score || 0;
+let mcAttemptedCount = quizState.attempted || 0;
+let mcAskedIds = quizState.askedIds || [];
+let currentMCCategory = quizState.category || 'All';
+
+let currentWeekOffset = 0;
+let selectedDateStr = new Date().toISOString().split('T')[0];
+let currentCalendarLayout = 'compact';
+let currentFormImages = [];
+let currentViewImages = [];
+let currentMCCorrectAnswer = '';
+let currentMCActiveCardId = null;
+
+function saveData() {
+  try {
+    localStorage.setItem('tm_tasks', JSON.stringify(tasks));
+    localStorage.setItem('tm_notes', JSON.stringify(notes));
+    localStorage.setItem('tm_flashcards', JSON.stringify(flashcards));
+    localStorage.setItem('tm_trash', JSON.stringify(trash));
+    localStorage.setItem('tm_pomo', JSON.stringify(pomoStats));
+    localStorage.setItem('tm_exam', JSON.stringify(examData));
+    localStorage.setItem('tm_flashcard_state', JSON.stringify({ index: currentCardIndex, category: currentFlashCategory }));
+    localStorage.setItem('tm_quiz_state', JSON.stringify({ score: mcTotalPoints, attempted: mcAttemptedCount, askedIds: mcAskedIds, category: currentMCCategory }));
+  } catch (e) {
+    console.error("Storage limit reached", e);
+  }
+  renderAll();
+}
+function navigateTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  
+  const targetPage = document.getElementById(pageId);
+  if (targetPage) targetPage.classList.add('active');
+  const navMap = { homePage: 0, tasksNotesPage: 1, calendarPage: 2, timerPage: 3, toolsPage: 4, gamesPage: 5 };
+  const navButtons = document.querySelectorAll('.bottom-nav .nav-btn');
+  if (navMap[pageId] !== undefined && navButtons[navMap[pageId]]) {
+    navButtons[navMap[pageId]].classList.add('active');
+  }
+  const titles = {
+    homePage: ["My Dashboard ✨", "Your school life, organized."],
+    tasksNotesPage: ["Tasks & Notes 📝📒", "Manage your assignments and notes."],
+    noteViewPage: ["Note Editor ✏️", "View or update your note."],
+    calendarPage: ["Weekly Calendar 🗓️", "Track your deadlines."],
+    timerPage: ["Focus Timer 🍅", "Pomodoro study sessions."],
+    toolsPage: ["Study Tools 🧮🃏🎯", "Calculator, Flashcards & Quiz."],
+    gamesPage: ["Study Break Games 🎮", "Quick fun between study blocks."]
+  };
+  if (titles[pageId]) {
+    document.getElementById('pageTitle').textContent = titles[pageId][0];
+    document.getElementById('pageSubtitle').textContent = titles[pageId][1];
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function switchTasksNotesTab(tab) {
+  const tBtn = document.getElementById('tasksTabBtn');
+  const nBtn = document.getElementById('notesTabBtn');
+  const tSec = document.getElementById('tasksSection');
+  const nSec = document.getElementById('notesSection');
+  if (tab === 'tasks') {
+    tBtn.classList.add('active');
+    nBtn.classList.remove('active');
+    tSec.hidden = false;
+    nSec.hidden = true;
+  } else {
+    nBtn.classList.add('active');
+    tBtn.classList.remove('active');
+    nSec.hidden = false;
+    tSec.hidden = true;
+  }
+}
+function switchToolTab(tab) {
+  const calcTab = document.getElementById('calcTabBtn');
+  const flashTab = document.getElementById('flashTabBtn');
+  const mcTab = document.getElementById('mcTabBtn');
+  
+  const calcSec = document.getElementById('calcSection');
+  const flashSec = document.getElementById('flashSection');
+  const mcSec = document.getElementById('mcSection');
+  calcTab.classList.remove('active');
+  flashTab.classList.remove('active');
+  if (mcTab) mcTab.classList.remove('active');
+  calcSec.hidden = true;
+  flashSec.hidden = true;
+  if (mcSec) mcSec.hidden = true;
+  if (tab === 'calc') {
+    calcTab.classList.add('active');
+    calcSec.hidden = false;
+  } else if (tab === 'flash') {
+    flashTab.classList.add('active');
+    flashSec.hidden = false;
+    renderFlashcardCategories();
+    renderFlashcards();
+  } else if (tab === 'mc') {
+    if (mcTab) mcTab.classList.add('active');
+    if (mcSec) mcSec.hidden = false;
+    renderMCCategories();
+    renderStandaloneMultipleChoice();
+  }
+}
+
+// Mini-Games Navigation & Logic
+function switchGame(gameNum) {
+  document.getElementById('miniGame1').style.display = gameNum === 1 ? 'block' : 'none';
+  document.getElementById('miniGame2').style.display = gameNum === 2 ? 'block' : 'none';
+  document.getElementById('gameTab1').classList.toggle('active', gameNum === 1);
+  document.getElementById('gameTab2').classList.toggle('active', gameNum === 2);
+  if (gameNum === 1) initMemoryGame();
+  if (gameNum === 2) initMathQuiz();
+}
+let memoryItems = ['💻', '📚', '⚡', '☕', '🧠', '💡', '🚀'];
+let memoryBoard = [];
+let firstCardSelection = null;
+let matchedPairsCount = 0;
+let lockMemoryBoard = false;
+function initMemoryGame() {
+  let chosen = [...memoryItems];
+  let deckIcons = [...chosen, ...chosen, '⭐'];
+  let deck = deckIcons
+    .sort(() => Math.random() - 0.5)
+    .map((icon, idx) => ({ id: idx, icon, flipped: false, matched: false }));
+  memoryBoard = deck;
+  matchedPairsCount = 0;
+  firstCardSelection = null;
+  lockMemoryBoard = false;
+  renderMemoryGame();
+}
+function renderMemoryGame() {
+  const scoreEl = document.getElementById('memoryScore');
+  if (scoreEl) scoreEl.textContent = `Matched: ${matchedPairsCount} / 7`;
+  const grid = document.getElementById('memoryGrid');
+  if (!grid) return;
+  grid.innerHTML = memoryBoard.map((card, idx) => `
+    <div class="memory-card ${card.flipped || card.matched ? 'flipped' : ''}" onclick="flipMemoryCard(${idx})">
+      ${card.flipped || card.matched ? card.icon : '❓'}
+    </div>
+  `).join('');
+}
+function flipMemoryCard(idx) {
+  if (lockMemoryBoard) return;
+  let card = memoryBoard[idx];
+  if (card.flipped || card.matched) return;
+  if (card.icon === '⭐') {
+    card.matched = true;
+    renderMemoryGame();
+    setTimeout(() => alert("⭐ Bonus Wildcard Star found!"), 200);
+    return;
+  }
+  card.flipped = true;
+  renderMemoryGame();
+  if (!firstCardSelection) {
+    firstCardSelection = { idx, icon: card.icon };
+  } else {
+    if (firstCardSelection.icon === card.icon) {
+      memoryBoard[firstCardSelection.idx].matched = true;
+      memoryBoard[idx].matched = true;
+      matchedPairsCount++;
+      firstCardSelection = null;
+      renderMemoryGame();
+      if (matchedPairsCount === 7) {
+        setTimeout(() => alert("🎉 Amazing! You completed all 15 boxes!"), 300);
+      }
+    } else {
+      lockMemoryBoard = true;
+      setTimeout(() => {
+        memoryBoard[firstCardSelection.idx].flipped = false;
+        memoryBoard[idx].flipped = false;
+        firstCardSelection = null;
+        lockMemoryBoard = false;
+        renderMemoryGame();
+      }, 700);
+    }
+  }
+}
+let currentMathAns = 0;
+let mathScore = 0;
+function initMathQuiz() {
+  mathScore = 0;
+  const scoreDisp = document.getElementById('mathScoreDisplay');
+  if (scoreDisp) scoreDisp.textContent = `Score: ${mathScore}`;
+  generateNewMathProblem();
+}
+function generateNewMathProblem() {
+  const n1 = Math.floor(Math.random() * 12) + 2;
+  const n2 = Math.floor(Math.random() * 12) + 2;
+  const ops = ['+', '-', '*'];
+  const op = ops[Math.floor(Math.random() * ops.length)];
+  if (op === '+') currentMathAns = n1 + n2;
+  if (op === '-') currentMathAns = n1 - n2;
+  if (op === '*') currentMathAns = n1 * n2;
+  const probEl = document.getElementById('mathProblem');
+  if (probEl) probEl.textContent = `${n1} ${op} ${n2} = ?`;
+  const ansInput = document.getElementById('mathAnswerInput');
+  if (ansInput) { ansInput.value = ''; ansInput.focus(); }
+}
+function checkMathAnswer() {
+  const ansInput = document.getElementById('mathAnswerInput');
+  if (!ansInput) return;
+  const userAns = parseInt(ansInput.value);
+  const scoreDisp = document.getElementById('mathScoreDisplay');
+  if (userAns === currentMathAns) {
+    mathScore++;
+    if (scoreDisp) scoreDisp.textContent = `Score: ${mathScore} (Correct!)`;
+    generateNewMathProblem();
+  } else {
+    if (scoreDisp) scoreDisp.textContent = `Score: ${mathScore} (Try again!)`;
+  }
+}
+let calcExpression = '0';
+function calcUpdateDisplay() {
+  const screen = document.getElementById('calcScreen');
+  if (screen) screen.textContent = calcExpression;
+}
+function calcClear() { calcExpression = '0'; calcUpdateDisplay(); }
+function calcAppend(val) {
+  if (calcExpression === '0' && !['+', '-', '*', '/'].includes(val) && val !== '.') calcExpression = val;
+  else calcExpression += val;
+  calcUpdateDisplay();
+}
+function calcBack() { calcExpression = calcExpression.length > 1 ? calcExpression.slice(0, -1) : '0'; calcUpdateDisplay(); }
+function calcCompute() {
+  try {
+    let sanitized = calcExpression.replace(/×/g, '*').replace(/÷/g, '/');
+    calcExpression = String(eval(sanitized));
+    calcUpdateDisplay();
+  } catch (e) {
+    calcExpression = 'Error';
+    calcUpdateDisplay();
+    setTimeout(() => { calcClear(); }, 1200);
+  }
+}
+
+// Flashcards Form Handler (Add or Edit)
+const flashForm = document.getElementById('flashForm');
+if (flashForm) {
+  flashForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('editCardId').value;
+    const category = document.getElementById('flashCategory').value.trim();
+    const front = document.getElementById('flashFront').value.trim();
+    const back = document.getElementById('flashBack').value.trim();
+    
+    if (editId) {
+      flashcards = flashcards.map(f => f.id == editId ? { ...f, category, front, back } : f);
+    } else {
+      flashcards.push({ id: Date.now(), category, front, back });
+      currentCardIndex = getFilteredFlashcards().length - 1;
+    }
+    flashForm.reset();
+    document.getElementById('editCardId').value = '';
+    document.getElementById('flashSubmitBtn').textContent = '＋ Save Flashcard';
+    document.getElementById('flashFormContent').hidden = true;
+    currentFlashCategory = category;
+    isCardFlipped = false;
+    saveData();
+  });
+}
+function filterFlashcardsByCategory(cat) {
+  currentFlashCategory = cat;
+  currentCardIndex = 0;
+  isCardFlipped = false;
+  saveData();
+}
+function openAddCardForCurrentCategory() {
+  document.getElementById('editCardId').value = '';
+  document.getElementById('flashSubmitBtn').textContent = '＋ Save Flashcard';
+  flashForm.reset();
+  const formContent = document.getElementById('flashFormContent');
+  if (formContent) formContent.hidden = false;
+  if (currentFlashCategory !== 'All') document.getElementById('flashCategory').value = currentFlashCategory;
+  document.getElementById('flashFront').focus();
+}
+function editCurrentFlashcard() {
+  const filtered = getFilteredFlashcards();
+  if (!filtered.length) return;
+  const card = filtered[currentCardIndex];
+  document.getElementById('editCardId').value = card.id;
+  document.getElementById('flashCategory').value = card.category;
+  document.getElementById('flashFront').value = card.front;
+  document.getElementById('flashBack').value = card.back;
+  document.getElementById('flashSubmitBtn').textContent = '💾 Update Flashcard';
+  document.getElementById('flashFormContent').hidden = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function deleteCurrentFlashcard() {
+  const filtered = getFilteredFlashcards();
+  if (!filtered.length) return;
+  const cardToDelete = filtered[currentCardIndex];
+  trash.push({ ...cardToDelete, itemType: 'flashcard' });
+  flashcards = flashcards.filter(f => f.id !== cardToDelete.id);
+  currentCardIndex = Math.max(0, currentCardIndex - 1);
+  isCardFlipped = false;
+  saveData();
+}
+function renderFlashcardCategories() {
+  const container = document.getElementById('flashCategoryFilters');
+  const addCategoryBtn = document.getElementById('addCardToCategoryBtn');
+  if (!container || !addCategoryBtn) return;
+  const categories = [...new Set(flashcards.map(f => f.category).filter(Boolean))];
+  if (currentFlashCategory !== 'All') {
+    addCategoryBtn.style.display = 'block';
+    addCategoryBtn.textContent = `+ Add to "${currentFlashCategory}"`;
+  } else {
+    addCategoryBtn.style.display = 'none';
+  }
+  let html = `<button class="filter ${currentFlashCategory === 'All' ? 'active' : ''}" type="button" onclick="filterFlashcardsByCategory('All')">All Categories</button>`;
+  html += categories.map(cat => `
+    <button class="filter ${currentFlashCategory === cat ? 'active' : ''}" type="button" onclick="filterFlashcardsByCategory('${escapeHtml(cat)}')">${escapeHtml(cat)}</button>
+  `).join('');
+  container.innerHTML = html;
+}
+function flipCard() { isCardFlipped = !isCardFlipped; renderFlashcards(); }
+function nextCard() {
+  const filtered = getFilteredFlashcards();
+  if (!filtered.length) return;
+  isCardFlipped = false;
+  currentCardIndex = (currentCardIndex + 1) % filtered.length;
+  saveData();
+}
+function prevCard() {
+  const filtered = getFilteredFlashcards();
+  if (!filtered.length) return;
+  isCardFlipped = false;
+  currentCardIndex = (currentCardIndex - 1 + filtered.length) % filtered.length;
+  saveData();
+}
+
+function shuffleFlashcards() {
+  const filtered = getFilteredFlashcards();
+  if (filtered.length < 2) return;
+  flashcards.sort(() => Math.random() - 0.5);
+  currentCardIndex = 0;
+  isCardFlipped = false;
+  saveData();
+}
+function resetOrderedFlashcards() {
+  flashcards.sort((a, b) => a.id - b.id);
+  currentCardIndex = 0;
+  isCardFlipped = false;
+  saveData();
+}
+
+function getFilteredFlashcards() {
+  return currentFlashCategory === 'All' ? flashcards : flashcards.filter(f => f.category === currentFlashCategory);
+}
+function renderFlashcards() {
+  const hub = document.getElementById('flashcardHub');
+  if (!hub) return;
+  const filtered = getFilteredFlashcards();
+  renderFlashcardCategories();
+  if (!filtered.length) {
+    hub.innerHTML = `<div class="empty">No flashcards found in this category. Click "+ Add to this Subject" above to create one!</div>`;
+    return;
+  }
+  if (currentCardIndex >= filtered.length) currentCardIndex = 0;
+  const card = filtered[currentCardIndex];
+  hub.innerHTML = `
+    <div style="display:flex; justify-content:flex-end; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+      <button class="small-btn edit" type="button" onclick="shuffleFlashcards()">🔀 Shuffle</button>
+      <button class="small-btn edit" type="button" onclick="resetOrderedFlashcards()">🔄 Original Order</button>
+    </div>
+    <div class="flashcard-box" onclick="flipCard()">
+      <span class="side-label">${escapeHtml(card.category)} · ${isCardFlipped ? 'Answer (Back)' : 'Question (Front)'} (${currentCardIndex + 1}/${filtered.length})</span>
+      <div class="content">${escapeHtml(isCardFlipped ? card.back : card.front)}</div>
+      <small class="subtitle" style="margin-top:16px">(Tap card to flip)</small>
+    </div>
+    <div class="flashcard-controls">
+      <button class="secondary" type="button" onclick="prevCard()">‹ Prev</button>
+      <button class="secondary" type="button" onclick="flipCard()">🔄 Flip</button>
+      <button class="secondary" type="button" onclick="nextCard()">Next ›</button>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="secondary" type="button" onclick="editCurrentFlashcard()" style="flex:1;">✏️ Edit Card</button>
+      <button class="danger-btn" type="button" onclick="deleteCurrentFlashcard()" style="flex:1;margin-top:10px;">🗑️ Delete Card</button>
+    </div>
+  `;
+}
+function renderMCCategories() {
+  const container = document.getElementById('mcCategoryFilters');
+  if (!container) return;
+  const categories = [...new Set(flashcards.map(f => f.category).filter(Boolean))];
+  let html = `<button class="filter ${currentMCCategory === 'All' ? 'active' : ''}" type="button" onclick="filterMCCategory('All')">All Categories</button>`;
+  html += categories.map(cat => `
+    <button class="filter ${currentMCCategory === cat ? 'active' : ''}" type="button" onclick="filterMCCategory('${escapeHtml(cat)}')">${escapeHtml(cat)}</button>
+  `).join('');
+  container.innerHTML = html;
+}
+function filterMCCategory(cat) {
+  currentMCCategory = cat;
+  mcAskedIds = []; 
+  renderMCCategories();
+  renderStandaloneMultipleChoice();
+}
+
+function renderStandaloneMultipleChoice() {
+  const mcHub = document.getElementById('flashcardMCSection');
+  if (!mcHub) return;
+  
+  let pool = currentMCCategory === 'All' ? flashcards : flashcards.filter(f => f.category === currentMCCategory);
+  
+  if (flashcards.length < 2 || pool.length < 1) {
+    mcHub.innerHTML = `<div class="empty">Please create at least 2 flashcards to generate multiple-choice quiz questions!</div>`;
+    return;
+  }
+  
+  let availablePool = pool.filter(f => !mcAskedIds.includes(f.id));
+  if (availablePool.length === 0) {
+    mcAskedIds = []; 
+    availablePool = pool;
+  }
+  
+  let activeCard = availablePool[Math.floor(Math.random() * availablePool.length)];
+  if (!activeCard && pool.length > 0) activeCard = pool[0];
+  if (!activeCard) return;
+
+  currentMCActiveCardId = activeCard.id;
+  if (!mcAskedIds.includes(activeCard.id)) {
+    mcAskedIds.push(activeCard.id);
+  }
+  
+  const sameSubjectCards = flashcards.filter(f => f.id !== activeCard.id);
+  if (sameSubjectCards.length < 1) {
+    mcHub.innerHTML = `<div class="empty">Add more flashcards across categories to generate multiple choice options.</div>`;
+    return;
+  }
+  
+  let wrongPool = sameSubjectCards.map(f => f.back).sort(() => Math.random() - 0.5);
+  let wrongChoices = wrongPool.slice(0, 2);
+  let options = [activeCard.back, ...wrongChoices].sort(() => Math.random() - 0.5);
+  currentMCCorrectAnswer = activeCard.back;
+  
+  const totalDeckSize = pool.length;
+  
+  mcHub.innerHTML = `
+    <div class="mc-card" id="activeMcCard">
+      <div class="mc-score-bar">
+        <span>Score: <span style="color:var(--accent);">${mcTotalPoints}</span> / ${totalDeckSize} cards (${mcAttemptedCount} Answered)</span>
+        <button class="small-btn edit" type="button" onclick="resetMCScore()">Reset Score</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span class="subject-tag">${escapeHtml(activeCard.category)}</span>
+        <button class="small-btn edit" type="button" onclick="renderStandaloneMultipleChoice()">🔄 Next Question</button>
+      </div>
+      <p style="font-size:15px;font-weight:700;margin-bottom:12px;white-space:pre-wrap;">Q: ${escapeHtml(activeCard.front)}</p>
+      <div class="mc-options">
+        ${options.map((opt, oIdx) => `
+          <button class="mc-option-btn" type="button" data-opt-idx="${oIdx}" onclick="checkMCOption(this, '${escapeHtml(opt).replace(/'/g, "\\'")}', ${totalDeckSize})">
+            <span>${escapeHtml(opt)}</span>
+            <span class="mc-opt-score">${opt === currentMCCorrectAnswer ? '+1 pt' : '0 pt'}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  saveData();
+}
+
+function checkMCOption(btn, selectedVal, totalDeckSize) {
+  const cardContainer = document.getElementById('activeMcCard');
+  if (!cardContainer || cardContainer.classList.contains('answered')) return; 
+  
+  cardContainer.classList.add('answered');
+  const allBtns = cardContainer.querySelectorAll('.mc-option-btn');
+  mcAttemptedCount++;
+  
+  if (selectedVal === currentMCCorrectAnswer) {
+    mcTotalPoints += 1;
+  }
+  
+  allBtns.forEach(b => {
+    b.disabled = true;
+    const optText = b.querySelector('span').textContent;
+    if (optText === currentMCCorrectAnswer) {
+      b.classList.add('correct');
+    }
+  });
+  
+  if (selectedVal !== currentMCCorrectAnswer) {
+    btn.classList.add('wrong');
+  }
+  
+  const scoreBar = cardContainer.querySelector('.mc-score-bar span');
+  if (scoreBar) {
+    scoreBar.innerHTML = `Score: <span style="color:var(--accent);">${mcTotalPoints}</span> / ${totalDeckSize} cards (${mcAttemptedCount} Answered)`;
+  }
+  saveData();
+}
+
+function resetMCScore() {
+  mcTotalPoints = 0;
+  mcAttemptedCount = 0;
+  mcAskedIds = [];
+  renderStandaloneMultipleChoice();
+}
+
+// Overlays & Modals
+const menuOverlay = document.getElementById('menuOverlay');
+const settingsOverlay = document.getElementById('settingsOverlay');
+const trashOverlay = document.getElementById('trashOverlay');
+const examCountdownOverlay = document.getElementById('examCountdownOverlay');
+const menuButton = document.getElementById('menuButton');
+if (menuButton) menuButton.addEventListener('click', () => menuOverlay.classList.add('show'));
+const openSettingsBtn = document.getElementById('openSettingsBtn');
+if (openSettingsBtn) openSettingsBtn.addEventListener('click', () => { menuOverlay.classList.remove('show'); settingsOverlay.classList.add('show'); });
+const openTrashBtn = document.getElementById('openTrashBtn');
+if (openTrashBtn) openTrashBtn.addEventListener('click', () => { menuOverlay.classList.remove('show'); trashOverlay.classList.add('show'); renderTrash(); });
+function openExamCountdownModal() { if (examCountdownOverlay) examCountdownOverlay.classList.add('show'); }
+function closeModals() { if (examCountdownOverlay) examCountdownOverlay.classList.remove('show'); }
+document.querySelectorAll('.close-overlay').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (menuOverlay) menuOverlay.classList.remove('show');
+    if (settingsOverlay) settingsOverlay.classList.remove('show');
+    if (trashOverlay) trashOverlay.classList.remove('show');
+    if (examCountdownOverlay) examCountdownOverlay.classList.remove('show');
+  });
+});
+function saveExamCountdown(e) {
+  e.preventDefault();
+  const examTitle = document.getElementById('examTitle');
+  const examDate = document.getElementById('examDate');
+  if (!examTitle || !examDate) return;
+  examData = { title: examTitle.value, date: examDate.value };
+  saveData();
+  closeModals();
+  renderHomeCountdown();
+}
+function renderHomeCountdown() {
+  const card = document.getElementById('homeCountdownCard');
+  if (!card) return;
+  if (!examData) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  const titleEl = document.getElementById('homeExamTitleName');
+  if (titleEl) titleEl.textContent = `🚨 ${examData.title}`;
+  const diff = new Date(examData.date) - new Date();
+  const timerEl = document.getElementById('homeBigCountdown');
+  if (!timerEl) return;
+  if (diff <= 0) {
+    timerEl.textContent = "Exam Time Has Arrived!";
+    return;
+  }
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / 1000 / 60) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+  timerEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+setInterval(renderHomeCountdown, 1000);
+const themeSelect = document.getElementById('themeSelect');
+const savedTheme = localStorage.getItem('tm_theme') || 'light';
+document.body.dataset.theme = savedTheme;
+if (themeSelect) {
+  themeSelect.value = savedTheme;
+  themeSelect.addEventListener('change', (e) => {
+    document.body.dataset.theme = e.target.value;
+    localStorage.setItem('tm_theme', e.target.value);
+  });
+}
+const exportDataBtn = document.getElementById('exportDataBtn');
+if (exportDataBtn) {
+  exportDataBtn.addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify({ tasks, notes, flashcards, trash, pomoStats, examData }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `TaskMate_Backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+  });
+}
+const importDataBtn = document.getElementById('importDataBtn');
+const importFileInput = document.getElementById('importFileInput');
+if (importDataBtn && importFileInput) {
+  importDataBtn.addEventListener('click', () => importFileInput.click());
+  importFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (data.tasks) tasks = data.tasks;
+        if (data.notes) notes = data.notes;
+        if (data.flashcards) flashcards = data.flashcards;
+        if (data.trash) trash = data.trash;
+        if (data.pomoStats) pomoStats = data.pomoStats;
+        if (data.examData) examData = data.examData;
+        saveData();
+        alert('Data imported successfully!');
+        if (settingsOverlay) settingsOverlay.classList.remove('show');
+      } catch (err) { alert('Invalid backup file format.'); }
+    };
+    reader.readAsText(file);
+  });
+}
+document.querySelectorAll('.form-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.collapse);
+    if (target) target.hidden = !target.hidden;
+  });
+});
+function triggerCamera(ctx) {
+  const el = document.getElementById(ctx === 'form' ? 'cameraInputForm' : 'cameraInputView');
+  if (el) el.click();
+}
+function triggerGallery(ctx) {
+  const el = document.getElementById(ctx === 'form' ? 'galleryInputForm' : 'galleryInputView');
+  if (el) el.click();
+}
+function handleImageSelect(event, targetArray, previewElementId, context) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > 800) { h *= 800 / w; w = 800; } }
+      else { if (h > 800) { w *= 800 / h; h = 800; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      targetArray.push(canvas.toDataURL('image/jpeg', 0.7));
+      renderImagePreviews(targetArray, previewElementId, context);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function renderImagePreviews(array, elementId, context) {
+  const container = document.getElementById(elementId);
+  if (!container) return;
+  container.innerHTML = array.map((src, idx) => `
+    <div class="img-thumb-wrap">
+      <img src="${src}" alt="Photo" onclick="openLightbox('${src}')">
+      <button type="button" class="img-delete-btn" onclick="removeImage('${context}', ${idx})">✕</button>
+    </div>
+  `).join('');
+}
+function removeImage(context, index) {
+  if (context === 'form') { currentFormImages.splice(index, 1); renderImagePreviews(currentFormImages, 'formImagePreview', 'form'); }
+  else { currentViewImages.splice(index, 1); renderImagePreviews(currentViewImages, 'viewImagePreview', 'view'); }
+}
+function openLightbox(src) {
+  const lightboxImg = document.getElementById('lightboxImg');
+  const photoLightbox = document.getElementById('photoLightbox');
+  if (lightboxImg && photoLightbox) {
+    lightboxImg.src = src;
+    photoLightbox.classList.add('show');
+  }
+}
+function closeLightbox() {
+  const photoLightbox = document.getElementById('photoLightbox');
+  if (photoLightbox) photoLightbox.classList.remove('show');
+}
+['Form', 'View'].forEach(ctx => {
+  const arr = ctx === 'Form' ? currentFormImages : currentViewImages;
+  const pId = ctx === 'Form' ? 'formImagePreview' : 'viewImagePreview';
+  const camInput = document.getElementById(`cameraInput${ctx}`);
+  const galInput = document.getElementById(`galleryInput${ctx}`);
+  if (camInput) camInput.addEventListener('change', e => handleImageSelect(e, arr, pId, ctx.toLowerCase()));
+  if (galInput) galInput.addEventListener('change', e => handleImageSelect(e, arr, pId, ctx.toLowerCase()));
+});
+// Tasks
+const taskForm = document.getElementById('taskForm');
+if (taskForm) {
+  taskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const taskTitle = document.getElementById('taskTitle').value;
+    const taskSubject = document.getElementById('taskSubject').value;
+    const taskDue = document.getElementById('taskDue').value;
+    const taskDueTime = document.getElementById('taskDueTime').value;
+    const taskPriority = document.getElementById('taskPriority').value;
+    const taskSubtasks = document.getElementById('taskSubtasks').value;
+    tasks.push({
+      id: Date.now(),
+      title: taskTitle,
+      subject: taskSubject,
+      due: taskDue,
+      time: taskDueTime,
+      priority: taskPriority,
+      subtasks: taskSubtasks.split('\n').map(s => s.trim()).filter(Boolean).map(text => ({ text, completed: false })),
+      completed: false
+    });
+    taskForm.reset();
+    const formContent = document.getElementById('taskFormContent');
+    if (formContent) formContent.hidden = true;
+    saveData();
+  });
+}
+function toggleTask(id) { tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t); saveData(); }
+function toggleSubtask(taskId, idx) {
+  tasks = tasks.map(t => {
+    if (t.id === taskId) {
+      let subs = [...t.subtasks];
+      subs[idx].completed = !subs[idx].completed;
+      return { ...t, subtasks: subs };
+    }
+    return t;
+  });
+  saveData();
+}
+function deleteTask(id) {
+  const item = tasks.find(t => t.id === id);
+  if (item) { trash.push({ ...item, itemType: 'task' }); tasks = tasks.filter(t => t.id !== id); saveData(); }
+}
+function getDueStatus(dueStr) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const due = new Date(dueStr); due.setHours(0,0,0,0);
+  const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+  if (diffDays < 0) return { label: 'Overdue', class: 'badge-overdue' };
+  if (diffDays === 0) return { label: 'Due Today', class: 'badge-today' };
+  if (diffDays === 1) return { label: 'Due Tomorrow', class: 'badge-tomorrow' };
+  return { label: `Due in ${diffDays} days`, class: 'badge-upcoming' };
+}
+// Notes
+const noteForm = document.getElementById('noteForm');
+if (noteForm) {
+  noteForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    notes.push({
+      id: Date.now(),
+      title: document.getElementById('noteTitle').value,
+      subject: document.getElementById('noteSubject').value.trim(),
+      body: document.getElementById('noteBody').value,
+      readOnly: document.getElementById('noteReadOnly').checked,
+      pinned: false,
+      images: [...currentFormImages],
+      updatedAt: new Date().toLocaleDateString()
+    });
+    currentFormImages = [];
+    renderImagePreviews([], 'formImagePreview', 'form');
+    noteForm.reset();
+    const formContent = document.getElementById('noteFormContent');
+    if (formContent) formContent.hidden = true;
+    saveData();
+  });
+}
+function togglePinNote(event, id) { event.stopPropagation(); notes = notes.map(n => n.id === id ? { ...n, pinned: !n.pinned } : n); saveData(); }
+function openNoteViewer(id) {
+  activeNoteId = id;
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  document.getElementById('viewNoteTitle').value = note.title;
+  document.getElementById('viewNoteSubject').value = note.subject || '';
+  document.getElementById('viewNoteBody').value = note.body;
+  document.getElementById('viewNoteMeta').textContent = `Last edited ${note.updatedAt || 'recently'}`;
+  currentViewImages = note.images || [];
+  renderImagePreviews(currentViewImages, 'viewImagePreview', 'view');
+  document.getElementById('viewReadOnlyToggle').checked = !!note.readOnly;
+  applyReadOnlyState(!!note.readOnly);
+  document.getElementById('pinnedBadgeView').hidden = !note.pinned;
+  navigateTo('noteViewPage');
+}
+function applyReadOnlyState(isReadOnly) {
+  document.getElementById('viewNoteTitle').readOnly = isReadOnly;
+  document.getElementById('viewNoteSubject').readOnly = isReadOnly;
+  document.getElementById('viewNoteBody').readOnly = isReadOnly;
+  document.getElementById('readOnlyBadge').hidden = !isReadOnly;
+  document.getElementById('viewMediaGroup').style.display = isReadOnly ? 'none' : 'flex';
+  document.getElementById('saveViewNote').style.display = isReadOnly ? 'none' : 'block';
+}
+const viewReadOnlyToggle = document.getElementById('viewReadOnlyToggle');
+if (viewReadOnlyToggle) {
+  viewReadOnlyToggle.addEventListener('change', (e) => {
+    applyReadOnlyState(e.target.checked);
+    if (activeNoteId) { notes = notes.map(n => n.id === activeNoteId ? { ...n, readOnly: e.target.checked } : n); saveData(); }
+  });
+}
+const printNoteBtn = document.getElementById('printNoteBtn');
+if (printNoteBtn) printNoteBtn.addEventListener('click', () => window.print());
+const saveViewNote = document.getElementById('saveViewNote');
+if (saveViewNote) {
+  saveViewNote.addEventListener('click', () => {
+    if (!activeNoteId) return;
+    notes = notes.map(n => n.id === activeNoteId ? {
+      ...n, title: document.getElementById('viewNoteTitle').value, subject: document.getElementById('viewNoteSubject').value.trim(), body: document.getElementById('viewNoteBody').value, readOnly: document.getElementById('viewReadOnlyToggle').checked, images: currentViewImages, updatedAt: new Date().toLocaleDateString()
+    } : n);
+    saveData();
+    navigateTo('tasksNotesPage');
+    switchTasksNotesTab('notes');
+  });
+}
+const closeNoteView = document.getElementById('closeNoteView');
+if (closeNoteView) {
+  closeNoteView.addEventListener('click', () => { navigateTo('tasksNotesPage'); switchTasksNotesTab('notes'); });
+}
+const deleteNoteFromView = document.getElementById('deleteNoteFromView');
+if (deleteNoteFromView) {
+  deleteNoteFromView.addEventListener('click', () => {
+    if (activeNoteId) {
+      const item = notes.find(n => n.id === activeNoteId);
+      if (item) { trash.push({ ...item, itemType: 'note' }); notes = notes.filter(n => n.id !== activeNoteId); saveData(); navigateTo('tasksNotesPage'); switchTasksNotesTab('notes'); }
+    }
+  });
+}
+function renderTrash() {
+  const list = document.getElementById('trashList');
+  if (!list) return;
+  if (!trash.length) { list.innerHTML = `<div class="empty">Trash Bin is empty.</div>`; return; }
+  list.innerHTML = trash.map(item => `
+    <div class="item">
+      <div class="item-content"><h4>${escapeHtml(item.title || item.subject || item.front)}</h4><span class="subject-tag">${item.itemType || 'item'}</span></div>
+      <div class="actions"><button class="small-btn restore" onclick="restoreFromTrash(${item.id})">Restore</button></div>
+    </div>
+  `).join('');
+}
+function restoreFromTrash(id) {
+  const item = trash.find(i => i.id === id);
+  if (!item) return;
+  if (item.itemType === 'task') tasks.push(item);
+  else if (item.itemType === 'note') notes.push(item);
+  else if (item.itemType === 'flashcard') flashcards.push(item);
+  else tasks.push(item);
+  trash = trash.filter(i => i.id !== id);
+  saveData();
+  renderTrash();
+}
+const emptyTrashBtn = document.getElementById('emptyTrashBtn');
+if (emptyTrashBtn) {
+  emptyTrashBtn.addEventListener('click', () => { if (confirm('Permanently delete all items?')) { trash = []; saveData(); renderTrash(); } });
+}
+document.querySelectorAll('.filters .filter[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filters .filter[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderTasks();
+  });
+});
+function setCalendarView(layout) {
+  currentCalendarLayout = layout;
+  const compactBtn = document.getElementById('calViewCompact');
+  const wideBtn = document.getElementById('calViewWide');
+  if (compactBtn) compactBtn.classList.toggle('active', layout === 'compact');
+  if (wideBtn) wideBtn.classList.toggle('active', layout === 'wide');
+  renderCalendar();
+}
+const prevWeek = document.getElementById('prevWeek');
+const nextWeek = document.getElementById('nextWeek');
+if (prevWeek) prevWeek.addEventListener('click', () => { currentWeekOffset--; renderCalendar(); });
+if (nextWeek) nextWeek.addEventListener('click', () => { currentWeekOffset++; renderCalendar(); });
+function renderCalendar() {
+  const weekGrid = document.getElementById('weekGrid');
+  const dayTasks = document.getElementById('dayTasks');
+  const weekLabel = document.getElementById('weekLabel');
+  if (!weekGrid) return;
+  weekGrid.className = `week-grid ${currentCalendarLayout}`;
+  const baseDate = new Date();
+  baseDate.setDate(baseDate.getDate() + (currentWeekOffset * 7));
+  let days = [];
+  for (let i = -3; i <= 3; i++) {
+    let d = new Date(baseDate);
+    d.setDate(baseDate.getDate() + i);
+    days.push(d);
+  }
+  if (weekLabel) {
+    weekLabel.textContent = currentWeekOffset === 0 ? "This Week" : `${days[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${days[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+  }
+  const todayStr = new Date().toISOString().split('T')[0];
+  weekGrid.innerHTML = days.map(d => {
+    const dateStr = d.toISOString().split('T')[0];
+    const isToday = dateStr === todayStr;
+    const isSelected = selectedDateStr === dateStr;
+    const count = tasks.filter(t => t.due === dateStr && !t.completed).length;
+    if (currentCalendarLayout === 'wide') {
+      return `
+        <div class="day-cell ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" onclick="selectCalendarDate('${dateStr}')">
+          <div class="wide-left"><div>${d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>${isToday ? '<span class="subject-tag">Today</span>' : ''}</div>
+          <div>${count ? `<span class="day-dot">${count} task${count > 1 ? 's' : ''}</span>` : '<small class="muted">No deadlines</small>'}</div>
+        </div>
+      `;
+    }
+    return `
+      <div class="day-cell ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" onclick="selectCalendarDate('${dateStr}')">
+        <div>${d.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+        <div class="day-num">${d.getDate()}</div>
+        ${count ? `<span class="day-dot">${count} task${count > 1 ? 's' : ''}</span>` : ''}
+      </div>
+    `;
+  }).join('');
+  const selectedDayTitle = document.getElementById('selectedDayTitle');
+  if (selectedDayTitle) {
+    selectedDayTitle.textContent = `Tasks for ${new Date(selectedDateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  }
+  const tasksForDay = tasks.filter(t => t.due === selectedDateStr);
+  if (dayTasks) {
+    dayTasks.innerHTML = tasksForDay.length ? tasksForDay.map(t => `
+      <div class="item ${t.completed ? 'completed' : ''}">
+        <input type="checkbox" class="check" ${t.completed ? 'checked' : ''} onclick="toggleTask(${t.id})">
+        <div class="item-content"><h4>${escapeHtml(t.title)}</h4><span class="subject-tag">${escapeHtml(t.subject)}</span>${t.time ? `<p>Time: ${t.time}</p>` : ''}</div>
+      </div>
+    `).join('') : `<div class="empty">No tasks scheduled for this day.</div>`;
+  }
+}
+function selectCalendarDate(dateStr) { selectedDateStr = dateStr; renderCalendar(); }
+function renderAll() {
+  renderStats();
+  renderTasks();
+  renderNotesFilters();
+  renderNotes();
+  renderFlashcardCategories();
+  renderFlashcards();
+  renderHomeViews();
+  renderCalendar();
+  renderHomeCountdown();
+  renderMemoryGame();
+  renderPomodoroStats();
+}
+function renderPomodoroStats() {
+  const pomoCount = document.getElementById('pomoCount');
+  const pomoMins = document.getElementById('pomoMins');
+  const pomoTotalTime = document.getElementById('pomoTotalTime');
+  if (pomoCount) pomoCount.textContent = pomoStats.sessions;
+  if (pomoMins) pomoMins.textContent = `${pomoStats.totalMinutes}m`;
+  if (pomoTotalTime) pomoTotalTime.textContent = `${pomoStats.totalMinutes}m`;
+}
+function renderStats() {
+  const total = document.getElementById('total');
+  const pending = document.getElementById('pending');
+  const completed = document.getElementById('completed');
+  if (total) total.textContent = tasks.length;
+  if (pending) pending.textContent = tasks.filter(t => !t.completed).length;
+  if (completed) completed.textContent = tasks.filter(t => t.completed).length;
+}
+function renderTasks() {
+  const list = document.getElementById('taskList');
+  const searchInput = document.getElementById('taskSearch');
+  if (!list || !searchInput) return;
+  const query = searchInput.value.toLowerCase();
+  let filtered = [...tasks].sort((a, b) => new Date(a.due) - new Date(b.due)).filter(t => {
+    if (currentFilter === 'Pending') return !t.completed;
+    if (currentFilter === 'Completed') return t.completed;
+    if (currentFilter === 'High') return t.priority === 'High';
+    return true;
+  }).filter(t => t.title.toLowerCase().includes(query) || t.subject.toLowerCase().includes(query));
+  if (!filtered.length) { list.innerHTML = `<div class="empty">No tasks found.</div>`; return; }
+  list.innerHTML = filtered.map(t => {
+    const status = getDueStatus(t.due);
+    const subs = (t.subtasks && t.subtasks.length) ? `<div class="subtask-list">${t.subtasks.map((sub, sIdx) => `<label class="subtask-item ${sub.completed ? 'completed' : ''}"><input type="checkbox" ${sub.completed ? 'checked' : ''} onclick="toggleSubtask(${t.id}, ${sIdx})"><span>${escapeHtml(sub.text)}</span></label>`).join('')}</div>` : '';
+    return `
+      <div class="item ${t.completed ? 'completed' : ''}">
+        <input type="checkbox" class="check" ${t.completed ? 'checked' : ''} onclick="toggleTask(${t.id})">
+        <div class="item-content">
+          <h4>${escapeHtml(t.title)}</h4>
+          <span class="subject-tag">${escapeHtml(t.subject)}</span>
+          <span class="priority ${t.priority}">${t.priority}</span>
+          ${!t.completed ? `<span class="due-badge ${status.class}">${status.label}</span>` : ''}
+          <p>Due: ${t.due} ${t.time ? 'at ' + t.time : ''}</p>
+          ${subs}
+        </div>
+        <div class="actions"><button class="small-btn delete" onclick="deleteTask(${t.id})">Delete</button></div>
+      </div>
+    `;
+  }).join('');
+}
+function renderNotesFilters() {
+  const container = document.getElementById('noteSubjectFilters');
+  if (!container) return;
+  const subjects = [...new Set(notes.map(n => n.subject).filter(Boolean))];
+  let html = `<button class="filter ${currentSubjectFilter === 'All' ? 'active' : ''}" type="button" onclick="filterNotesBySubject('All')">All Subjects</button>`;
+  html += subjects.map(s => `<button class="filter ${currentSubjectFilter === s ? 'active' : ''}" type="button" onclick="filterNotesBySubject('${escapeHtml(s)}')">${escapeHtml(s)}</button>`).join('');
+  container.innerHTML = html;
+}
+function filterNotesBySubject(subj) { currentSubjectFilter = subj; renderNotesFilters(); renderNotes(); }
+function renderNotes() {
+  const list = document.getElementById('notesList');
+  const searchInput = document.getElementById('noteSearch');
+  if (!list || !searchInput) return;
+  const query = searchInput.value.toLowerCase();
+  let filtered = notes.filter(n => (currentSubjectFilter === 'All' || n.subject === currentSubjectFilter) && (n.title.toLowerCase().includes(query) || (n.subject && n.subject.toLowerCase().includes(query)) || n.body.toLowerCase().includes(query)));
+  filtered.sort((a, b) => (b.pinned === true) - (a.pinned === true));
+  if (!filtered.length) { list.innerHTML = `<div class="empty">No notes found.</div>`; return; }
+  list.innerHTML = filtered.map(n => `
+    <div class="note-card ${n.pinned ? 'pinned' : ''}" onclick="openNoteViewer(${n.id})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>${n.pinned ? '<span class="pinned-badge">📌 Pinned</span>' : ''}${n.readOnly ? '<span class="readonly-badge">🔒 Read-Only</span>' : ''}</div>
+        <button class="small-btn pin-btn" onclick="togglePinNote(event, ${n.id})">${n.pinned ? 'Unpin' : 'Pin 📌'}</button>
+      </div>
+      <h4>${escapeHtml(n.title)}</h4>
+      ${n.subject ? `<span class="subject-tag">${escapeHtml(n.subject)}</span>` : ''}
+      <div class="note-preview">${escapeHtml(n.body)}</div>
+      ${(n.images && n.images.length) ? `<div class="note-image-preview">${n.images.map(s => `<img src="${s}" onclick="event.stopPropagation(); openLightbox('${s}')">`).join('')}</div>` : ''}
+    </div>
+  `).join('');
+}
+function renderHomeViews() {
+  const homeTasks = document.getElementById('homeTasks');
+  const homeNotes = document.getElementById('homeNotes');
+  const globalSearch = document.getElementById('globalSearch');
+  if (!homeTasks || !homeNotes || !globalSearch) return;
+  const query = globalSearch.value.toLowerCase();
+  let pending = tasks.filter(t => !t.completed).sort((a, b) => new Date(a.due) - new Date(b.due));
+  let recNotes = [...notes].sort((a, b) => (b.pinned === true) - (a.pinned === true));
+  if (query) {
+    pending = pending.filter(t => t.title.toLowerCase().includes(query) || t.subject.toLowerCase().includes(query));
+    recNotes = recNotes.filter(n => n.title.toLowerCase().includes(query) || (n.subject && n.subject.toLowerCase().includes(query)) || n.body.toLowerCase().includes(query));
+  } else {
+    pending = pending.slice(0, 3);
+    recNotes = recNotes.slice(0, 3);
+  }
+  homeTasks.innerHTML = pending.length ? pending.map(t => {
+    const status = getDueStatus(t.due);
+    return `<div class="item"><div class="item-content"><h4>${escapeHtml(t.title)}</h4><span class="subject-tag">${escapeHtml(t.subject)}</span><span class="due-badge ${status.class}">${status.label}</span><p>Due: ${t.due}</p></div></div>`;
+  }).join('') : `<div class="empty">No matching tasks found.</div>`;
+  homeNotes.innerHTML = recNotes.length ? recNotes.map(n => `
+    <div class="note-card ${n.pinned ? 'pinned' : ''}" onclick="openNoteViewer(${n.id})">
+      ${n.pinned ? '<span class="pinned-badge">📌 Pinned</span>' : ''}
+      <h4>${escapeHtml(n.title)}</h4>
+      <div class="note-preview">${escapeHtml(n.body)}</div>
+    </div>
+  `).join('') : `<div class="empty">No matching notes found.</div>`;
+}
+function escapeHtml(str) {
+  return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+let timerInterval = null;
+let currentModeMinutes = 25;
+let timerSeconds = 25 * 60;
+function playAlarmChime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.25);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.9);
+  } catch(e) {}
+}
+document.querySelectorAll('.timer-modes button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.timer-modes button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    clearInterval(timerInterval); timerInterval = null;
+    currentModeMinutes = parseInt(btn.dataset.minutes);
+    timerSeconds = currentModeMinutes * 60;
+    updateTimerDisplay();
+    const timerStart = document.getElementById('timerStart');
+    if (timerStart) timerStart.textContent = "▶ Start Focus";
+  });
+});
+const timerStartBtn = document.getElementById('timerStart');
+if (timerStartBtn) {
+  timerStartBtn.addEventListener('click', () => {
+    const timerStatus = document.getElementById('timerStatus');
+    if (timerInterval) {
+      clearInterval(timerInterval); timerInterval = null;
+      timerStartBtn.textContent = "▶ Resume";
+      if (timerStatus) timerStatus.textContent = "Paused.";
+    } else {
+      timerStartBtn.textContent = "⏸ Pause";
+      if (timerStatus) timerStatus.textContent = "Stay focused!";
+      timerInterval = setInterval(() => {
+        timerSeconds--;
+        updateTimerDisplay();
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval); timerInterval = null;
+          playAlarmChime();
+          const activeBtn = document.querySelector('.timer-modes button.active');
+          if (activeBtn && activeBtn.dataset.mode === 'Focus') {
+            pomoStats.sessions++;
+            pomoStats.totalMinutes += currentModeMinutes;
+            saveData();
+          }
+          alert("Session completed! Great work!");
+        }
+      }, 1000);
+    }
+  });
+}
+const timerResetBtn = document.getElementById('timerReset');
+if (timerResetBtn) {
+  timerResetBtn.addEventListener('click', () => {
+    clearInterval(timerInterval); timerInterval = null;
+    const activeMode = document.querySelector('.timer-modes button.active');
+    if (activeMode) currentModeMinutes = parseInt(activeMode.dataset.minutes);
+    timerSeconds = currentModeMinutes * 60;
+    updateTimerDisplay();
+    if (timerStartBtn) timerStartBtn.textContent = "▶ Start Focus";
+    const timerStatus = document.getElementById('timerStatus');
+    if (timerStatus) timerStatus.textContent = "Ready when you are.";
+  });
+}
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+  const s = (timerSeconds % 60).toString().padStart(2, '0');
+  const timerDisplay = document.getElementById('timerDisplay');
+  if (timerDisplay) timerDisplay.textContent = `${m}:${s}`;
+}
+const globalSearch = document.getElementById('globalSearch');
+const taskSearch = document.getElementById('taskSearch');
+const noteSearch = document.getElementById('noteSearch');
+if (globalSearch) globalSearch.addEventListener('input', renderHomeViews);
+if (taskSearch) taskSearch.addEventListener('input', renderTasks);
+if (noteSearch) noteSearch.addEventListener('input', renderNotes);
+renderAll();
+</script>
+</body>
+</html>
